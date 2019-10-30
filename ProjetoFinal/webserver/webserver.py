@@ -3,9 +3,11 @@ from flask_restful import Api, Resource, reqparse, fields, marshal
 from flask_httpauth import HTTPBasicAuth
 import json
 import jsonpickle
+import requests
 
 app = Flask(__name__, static_url_path="")
 api = Api(app)
+url = "http://127.0.0.1:8000/Tarefa"
 
 
 class Tarefas:
@@ -13,34 +15,6 @@ class Tarefas:
 		self.nome = nome
 		self.nivel = nivel
 
-t1 = Tarefas("limpar", 1)
-t2 = Tarefas("cozinhar", 2)
-t3 = Tarefas("brincar", 0)
-
-tarefas_dict = {
-	0: t1,
-	1: t2
-
-}
-
-
-def addToDict(tarefa):
-	key = 0
-	while(1):
-		if key in tarefas_dict:
-			key +=1
-		else:
-			tarefas_dict[key] = tarefa
-			break
-	return
-
-
-def DictOFObjectsToJSON(tarefas):
-	new_dict = {}
-	for key in tarefas:
-		tarefa = tarefas[key].__dict__
-		new_dict[key] = tarefa
-	return new_dict
 
 
 class TarefaListAPI(Resource):
@@ -55,16 +29,21 @@ class TarefaListAPI(Resource):
 								   location='json')
 		super(TarefaListAPI, self).__init__()
 
-	def get(self):
-		response_dict = DictOFObjectsToJSON(tarefas_dict)
-		return {'tasks': response_dict}, 200
+	def get(self):	#Listar Tarefas
+		r = requests.get(url)
+		text = r.text
+		#r = r.text
+		#response_dict = DictOFObjectsToJSON(tarefas_dict)
+		print(text)
+		text = json.loads(text)
+		return text, 200
 
-	def post(self):
+	def post(self): #Adicionar Tarefa
 		args = self.reqparse.parse_args()
-		tarefa = Tarefas(args['nome'], args['nivel'])
-		addToDict(tarefa)
-		response_dict = DictOFObjectsToJSON(tarefas_dict)
-		return {'tasks': response_dict}, 200
+		payload = {'nome': args['nome'], 'nivel': args['nivel']}
+		r = requests.post(url, json=payload)
+		text = json.loads(r.text)
+		return {'tasks': text}, 200
 
 
 class TarefaAPI(Resource):
@@ -79,31 +58,17 @@ class TarefaAPI(Resource):
 								   location='json')
 		super(TarefaAPI, self).__init__()
 
-	def get(self, tarefa_id):
-		if tarefa_id not in tarefas_dict:
-			print("ERRO")
-			abort(404)
-		tarefa = tarefas_dict[tarefa_id]
+	def get(self, tarefa_id): #Listar uma Tarefa
+		par_url = url + '/' + str(tarefa_id)
+		r = requests.get(par_url)
+		text = json.loads(r.text)
+		return {'task': text}, 200
 
-		return {'task': vars(tarefa)}
-
-	def put(self, tarefa_id):
-		if tarefa_id not in tarefas_dict:
-			abort(404)
-		tarefa = tarefas_dict[tarefa_id]
-		args = self.reqparse.parse_args()
-		for k, v in args.items():
-			if v is not None:
-				tarefas_dict[tarefa_id].k = v
-		response_dict = DictOFObjectsToJSON(tarefas_dict)
-		return {'tasks': response_dict}, 200
-
-	def delete(self, tarefa_id):
-		if tarefa_id not in tarefas_dict:
-			abort(404)
-		del tarefas_dict[tarefa_id]
-		response_dict = DictOFObjectsToJSON(tarefas_dict)
-		return {'tasks': response_dict}, 200
+	def delete(self, tarefa_id): #Remover Tarefa
+		par_url = url + '/' + str(tarefa_id)
+		r = requests.delete(par_url)
+		text = json.loads(r.text)
+		return {'task': text}, 200
 
 class HealthCheck(Resource):
 
@@ -118,7 +83,7 @@ api.add_resource(TarefaAPI, '/Tarefa/<int:tarefa_id>', endpoint='task')
 api.add_resource(HealthCheck, '/healthcheck', endpoint='healthcheck')
 
 if __name__ == '__main__':
-	app.run(debug=True, host='0.0.0.0')
+	app.run(debug=True, host='0.0.0.0', port = 5000)
 
 #tarefa = tarefas_dict[key]
 #thisdict["color"] = "red"

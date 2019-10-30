@@ -6,7 +6,7 @@ import json
 
 parser = argparse.ArgumentParser(description="Manipulador de Tarefas - APS2")
 
-parser.add_argument('acao', action = 'store', choices=['adicionar', 'listar', 'buscar', 'apagar', 'atualizar'],
+parser.add_argument('acao', action = 'store', choices=['adicionar', 'listar', 'buscar', 'apagar'],
 					help = 'Acao desejada para as Tarefas')
 
 
@@ -44,24 +44,11 @@ def selector():
 		r = requests.delete(par_url)
 		print(r.text)
 
-	elif(arguments.acao == "atualizar"):
-		if(arguments.nome == None and arguments.nivel == None):
-			print("Acao invalida - Parametro a ser atualizado faltando (nome, nivel)")
-			return
-		if(arguments.nome == None):
-			payload = {"nivel": arguments.nivel}
-		if(arguments.nivel == None):
-			payload = {"nome": arguments.nome}
-		par_url = url + '/' + str(arguments.id)
-		r = requests.put(par_url, json=payload)
-		print(r.text)
-
 
 '''
 – /Tarefa/ - GET: lista todas as tarefas do dicionário.
 – /Tarefa/ - POST: Adiciona uma tarefa.
 – /Tarefa/<id> - GET: lista a tarefa com o determinado id.
-– /Tarefa/<id> - PUT: atualiza uma tarefa com o determinado id.
 – /Tarefa/<id> - DELETE: apaga a tarefa com o determinado id.
 '''
 
