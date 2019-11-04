@@ -6,9 +6,9 @@ import jsonpickle
 import pymysql
 
 
-def connect_db(host='localhost',user='root',password='123',database='TAREFAS_DB'):
+def connect_db(host='mysql-image',user='root',password='123',database='TAREFAS_DB'):
 	conn = pymysql.connect(
-		host='localhost',
+		host='mysql-image',
 		user='root',
 		password='123',
 		database='TAREFAS_DB')
