@@ -8,7 +8,7 @@ import pymysql
 
 def connect_db(host='mysql-image',user='root',password='123',database='TAREFAS_DB'):
 	conn = pymysql.connect(
-		host='mysql-image',
+		host='mysql-image', #endereco do pod com imagem do mysql
 		user='root',
 		password='123',
 		database='TAREFAS_DB')

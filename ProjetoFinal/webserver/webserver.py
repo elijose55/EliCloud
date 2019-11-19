@@ -4,10 +4,13 @@ from flask_httpauth import HTTPBasicAuth
 import json
 import jsonpickle
 import requests
+import os
 
 app = Flask(__name__, static_url_path="")
 api = Api(app)
-url = "http://127.0.0.1:8000/Tarefa"
+vpn_ip = os.environ["VPN_IP"]
+url = "http://" + vpn_ip + ":8000/Tarefa"
+#url = "http://127.0.0.1:8000"
 
 
 class Tarefas:
