@@ -1,0 +1,146 @@
+# Na minha maquina
+
+sudo docker rmi -f $(sudo docker images -aq)
+
+sudo docker build -f Dockerfile -t webserver:latest .
+
+sudo docker image ls
+
+sudo docker run -p 5001:5000 webserver:latest
+
+sudo docker tag [IMAGE ID] elijose55/webserver:latest
+
+sudo docker push elijose55/webserver
+
+
+# No client do Kubernetes AWS
+
+juju scp kubernetes-master/0:config ~/.kube/config
+
+VPN_POD_IP=$(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].status.podIP }')
+
+kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=$VPN_POD_IP
+
+kubectl get all
+
+kubectl expose deployment webserver --type=LoadBalancer
+
+# Para setar o OpenVPN server no kubernetes AWS
+
+kubectl delete deployment.apps/openvpn
+
+kubectl delete pvc openvpn-data-claim
+
+kubectl delete pv openvpn-data
+
+helm delete openvpn
+
+helm del --purge openvpn
+
+esperar...
+
+kubectl create -f create-storage.yaml
+
+kubectl create -f create-storage-claim.yaml
+
+helm init
+
+helm install --name openvpn -f values.yaml stable/openvpn
+#talvez seja preciso de um sleep
+
+chmod +x script
+
+./script eli default openvpn
+
+#arquivo eli.ovpn devera ser criado no proprio diretorio e devera ser transferido para a outra cloud
+
+#POD_NAME=$(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].metadata.name }')
+
+kubectl exec -it $(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].metadata.name }') bash
+
+#ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}'
+
+iptables -t nat -A PREROUTING -i eth0 -d $(ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}') -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6
+
+iptables -t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE
+
+exit
+
+
+
+
+
+
+# No client do Kubernetes OPENSTACK
+
+kubectl create secret generic mysql-root-pass --from-literal=123
+
+kubectl create secret generic mysql-user-pass --from-literal=username=user --from-literal=password=123
+
+errado--kubectl create secret generic mysql-db-url --from-literal=database=polls --from-literal=url='jdbc:mysql://polling-app-mysql:3306/polls?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false'
+
+
+#kubectl apply -f database-pv.yaml
+kubectl apply -f mysql-deployment.yaml
+
+#kubectl run database --image=elijose55/database:latest --port=8000 --replicas=1
+kubectl apply -f webserverDB-deployment.yaml
+
+#kubectl expose deployment database --type=LoadBalancer
+
+juju run --unit kubernetes-worker/[# worker] "open-port [porta]"
+juju run --unit kubernetes-worker/0 "open-port 30525"
+
+#PARA OBTER O CERTIFICADO PARA O CLIENT
+sftp ubuntu@[IP_DA_INSTANCIA]:openvpn/eli.ovpn ~/Desktop
+
+# Para rodar o client
+
+apt-get update
+
+apt-get install nano
+
+apt-get install  -y openvpn
+
+mkdir -p /dev/net
+mknod /dev/net/tun c 10 200
+chmod 600 /dev/net/tun
+
+sed '5d' eli.ovpn > tmp.ovpn
+mv tmp.ovpn eli.ovpn
+
+openvpn --config eli.ovpn --daemon .
+openvpn --config eli.ovpn
+
+
+
+#EXTRAS
+
+OVPN_K8S_SERVICE_NETWORK:
+
+Get this by looking at the ips of your services.
+
+ kubectl get services -o=template --template='{{ range $index, $element := .items }}{{ $element.spec.clusterIP }}
+ {{end}}'
+
+
+OVPN_K8S_POD_NETWORK:
+
+Get this by looking at the IPs of your running pods.
+ex
+ $kubectl get pods -o=template --template='{{range $index, $element := .items}}  {{$element.status.podIP}} {{$element.metadata.name}}
+ {{end}}'
+
+
+OVPN_K8S_DNS:
+
+You can find this using
+
+ kubectl --namespace=kube-system get service kube-dns
+
+
+
+
+
+
+
