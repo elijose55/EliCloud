@@ -23,6 +23,8 @@ spec:
             secretKeyRef:
               name: vpn-certificate
               key: password
+        command: ["/bin/sh", "-c"]
+        args: ["touch eli.ovpn &&  printenv VPN_CERTIFICATE > eli.ovpn && apt-get update && apt-get install -y openvpn && mkdir -p /dev/net && mknod /dev/net/tun c 10 200 && chmod 600 /dev/net/tun"] 
         ports:
         - containerPort: 8000
         securityContext:
