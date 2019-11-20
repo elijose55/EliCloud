@@ -17,6 +17,12 @@ spec:
       containers:
       - name: database
         image: elijose55/database:latest
+        env:
+        - name: VPN_CERTIFICATE
+          valueFrom:
+            secretKeyRef:
+              name: vpn_certificate
+              key: password
         ports:
         - containerPort: 8000
         securityContext:
