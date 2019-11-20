@@ -55,9 +55,6 @@ openvpn:
     enabled: true
     proxy:
       port: 8000
-  iptablesExtra:
-    - -t nat -A PREROUTING -d 192.168.12.87 -p tcp --dport 80 -j DNAT --to-destination 192.168.12.77
-    - -t NAT -A POSTROUTING -d 192.168.12.77 -p tcp --dport 80 -j SNAT --to-source 192.168.12.87
   # Arbitrary lines appended to the end of the server configuration file
   # conf: |
   #  max-clients 100
