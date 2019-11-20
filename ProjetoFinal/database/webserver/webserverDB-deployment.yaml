@@ -21,7 +21,7 @@ spec:
         - name: VPN_CERTIFICATE
           valueFrom:
             secretKeyRef:
-              name: vpn_certificate
+              name: vpn-certificate
               key: password
         ports:
         - containerPort: 8000
