@@ -1,0 +1,11 @@
+rm eli.ovpn
+rsync aws_script ubuntu@18.212.196.74:~/
+rsync teste ubuntu@18.212.196.74:~/
+cat ./teste | ssh ubuntu@18.212.196.74
+sftp ubuntu@18.212.196.74:EliCloud/ProjetoFinal/openvpn/eli.ovpn .
+sshpass -p "cloudp" rsync eli.ovpn cloud@10.103.0.25:~/
+sshpass -p "cloudp" rsync openstack_script cloud@10.103.0.25:~/
+sshpass -p "cloudp" rsync maas_script cloud@10.103.0.25:~/
+cat maas_script | sshpass -p "cloudp" ssh cloud@10.103.0.25
+echo FINISH
+

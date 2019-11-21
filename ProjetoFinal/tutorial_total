@@ -14,6 +14,10 @@ sudo docker push elijose55/webserver
 
 
 
+sudo snap install kubectl --classic
+
+kubectl config use-context juju-context-aws
+
 O SCRIPT DEVERA SER RODADO EM UM DIRETORIO QUE TENHA A CHAVE PRIVADA DA INSTANCIA AWS A SER ACESSADA
 
 # No client do Kubernetes AWS
@@ -42,6 +46,7 @@ sleep 30
 kubectl delete deployment webserver
 
 kubectl delete svc webserver
+kubectl delete service/ovpn-service
 
 sleep 15
 
@@ -57,7 +62,7 @@ sleep 25
 
 helm install --name openvpn -f values.yaml stable/openvpn
 
-sleep 20
+sleep 25
 
 chmod +x script
 
@@ -75,11 +80,11 @@ exit
 
 
 # TESTAR SERVICO AO INVEZ DE PEGAR O IP DO POD
-# kubectl expose deployment openvpn --name=ovpn-service --cluster-ip=None
+#VPN_POD_IP=$(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].status.podIP }')
 
-VPN_POD_IP=$(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].status.podIP }')
+kubectl expose deployment openvpn --name=ovpn-service --cluster-ip=None
 
-kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=$VPN_POD_IP
+kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=ovpn-service
 
 sleep 20
 
@@ -92,11 +97,13 @@ sleep 10
 juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 
+sleep 10
+
 exit
 
 
 #FALTA PEGAR O IP DA INSTANCIA POR INPUT
-sftp ubuntu@18.212.50.159:EliCloud/ProjetoFinal/openvpn/eli.ovpn .
+#sftp ubuntu@18.212.196.74:EliCloud/ProjetoFinal/openvpn/eli.ovpn .
 
 
 rsync eli.ovpn cloud@10.103.0.25:~/
@@ -107,7 +114,7 @@ rsync eli.ovpn cloud@10.103.0.25:~/
 
 
 
-
+kubectl config use-context juju-context-openstack
 
 # No client do Kubernetes OPENSTACK
 
@@ -117,11 +124,11 @@ rsync eli.ovpn cloud@10.103.0.25:~/
 #FALTA PEGAR O IP DA INSTANCIA POR INPUT
 ssh -i key2.pem cloud@10.103.0.25
 
-rsync eli.ovpn ubuntu@192.168.7.252:~/
+#rsync eli.ovpn ubuntu@192.168.7.252:~/
 
-rm eli.ovpn
+#rm eli.ovpn
 
-ssh ubuntu@192.168.7.252
+#ssh ubuntu@192.168.7.252
 
 kubectl delete secret vpn-certificate
 
@@ -132,6 +139,14 @@ kubectl delete secret mysql-user-pass
 kubectl delete deployment database
 
 kubectl delete deployment mysql-image
+
+kubectl delete svc mysql-image
+
+kubectl delete pvc mysql-pv-claim
+
+kubectl delete pv mysql-pv
+
+sleep 10
 
 kubectl create secret generic mysql-root-pass --from-literal=password=123
 
@@ -145,9 +160,13 @@ kubectl create secret generic vpn-certificate --from-file=password=eli.ovpn
 
 sleep 5
 
-git clone https://github.com/elijose55/EliCloud.git
+#git clone https://github.com/elijose55/EliCloud.git
 
-cd EliCloud/ProjetoFinal/database/mysql
+#cd EliCloud/ProjetoFinal/database/mysql
+
+cd ..
+
+cd database/mysql
 
 kubectl apply -f mysql-deployment.yaml
 

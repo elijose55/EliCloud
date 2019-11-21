@@ -1,0 +1,34 @@
+juju scp kubernetes-master/0:config ~/.kube/config
+kubectl delete deployment.apps/openvpn
+kubectl delete pvc openvpn-data-claim
+kubectl delete pv openvpn-data
+sudo snap install helm --classic
+helm init
+helm delete openvpn
+helm del --purge openvpn
+sleep 30
+kubectl delete deployment webserver
+kubectl delete svc webserver
+kubectl delete service/ovpn-service
+sleep 15
+rm -R -f EliCloud
+git clone https://github.com/elijose55/EliCloud.git
+cd EliCloud/ProjetoFinal/openvpn
+kubectl create -f create-storage.yaml
+kubectl create -f create-storage-claim.yaml
+sleep 25
+helm install --name openvpn -f values.yaml stable/openvpn
+sleep 25
+chmod +x script
+./script eli default openvpn
+kubectl exec -it $(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].metadata.name }') -- bash -c "iptables -t nat -A PREROUTING -i eth0 -d $(ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}') -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6 && iptables -t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE"
+kubectl expose deployment openvpn --name=ovpn-service --cluster-ip=None
+kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=ovpn-service
+sleep 20
+kubectl get all
+kubectl expose deployment webserver --type=LoadBalancer
+sleep 10
+juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
+juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
+sleep 10
+exit
