@@ -12,7 +12,7 @@ kubectl create secret generic vpn-certificate --from-file=password=eli.ovpn
 sleep 5
 rm -R -f EliCloud
 git clone https://github.com/elijose55/EliCloud.git
-cd database/mysql
+cd EliCloud/database/mysql
 kubectl apply -f mysql-deployment.yaml
 sleep 20
 cd ..
