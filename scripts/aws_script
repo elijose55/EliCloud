@@ -28,6 +28,8 @@ kubectl expose deployment webserver --type=LoadBalancer
 sleep 10
 juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
-sleep 10
-./script eli default openvpn
+sleep 15
+chmod +x cert_script
+./cert_script $(kubectl get svc webserver -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+echo FIM_AWS
 exit

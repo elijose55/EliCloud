@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+sed -i "s/#IPLB/$1/g" eli.ovpn
