@@ -1,8 +1,0 @@
-sudo apt install mysql-server
-sudo mysql_secure_installation
-mysql -u root -p TAREFAS_DB < script01.sql
-
-
-pip3 install pymysql
-python3 database.py
-
