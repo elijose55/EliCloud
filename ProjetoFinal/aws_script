@@ -20,8 +20,6 @@ sleep 25
 helm install --name openvpn -f values.yaml stable/openvpn
 sleep 25
 chmod +x script
-./script eli default openvpn
-kubectl exec -it $(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].metadata.name }') -- bash -c "iptables -t nat -A PREROUTING -i eth0 -d $(ifconfig eth0 | grep 'inet addr' | cut -d: -f2 | awk '{print $1}') -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6 && iptables -t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE"
 kubectl expose deployment openvpn --name=ovpn-service --cluster-ip=None
 kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=ovpn-service
 sleep 20
@@ -31,4 +29,5 @@ sleep 10
 juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 sleep 10
+./script eli default openvpn
 exit

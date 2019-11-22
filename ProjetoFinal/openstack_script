@@ -8,8 +8,6 @@ kubectl delete pvc mysql-pv-claim
 kubectl delete pv mysql-pv
 kubectl create secret generic mysql-root-pass --from-literal=password=123
 kubectl create secret generic mysql-user-pass --from-literal=username=user --from-literal=password=123
-sed '5d' eli.ovpn > tmp.ovpn
-mv tmp.ovpn eli.ovpn
 kubectl create secret generic vpn-certificate --from-file=password=eli.ovpn
 sleep 5
 rm -R -f EliCloud
@@ -19,6 +17,6 @@ kubectl apply -f mysql-deployment.yaml
 sleep 20
 cd ..
 cd webserver/
-kubectl apply -f webserverDB-deployment.yaml
+kubectl apply -f webserver-deployment.yaml
 sleep 20
 exit

@@ -1,4 +1,4 @@
-rsync eli.ovpn ubuntu@192.168.7.252:~/
+rsync -I eli.ovpn ubuntu@192.168.7.252:~/
 rm eli.ovpn
 chmod +x openstack_script
 cat openstack_script | ssh ubuntu@192.168.7.252

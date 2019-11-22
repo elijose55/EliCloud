@@ -1,0 +1,253 @@
+# Na minha maquina
+
+sudo docker rmi -f $(sudo docker images -aq)
+
+sudo docker build -f Dockerfile -t webserver:latest .
+
+sudo docker image ls
+
+sudo docker run -p 5001:5000 webserver:latest
+
+sudo docker tag [IMAGE ID] elijose55/webserver:latest
+
+sudo docker push elijose55/webserver
+
+
+
+sudo snap install kubectl --classic
+
+kubectl config use-context juju-context-aws
+
+O SCRIPT DEVERA SER RODADO EM UM DIRETORIO QUE TENHA A CHAVE PRIVADA DA INSTANCIA AWS A SER ACESSADA
+
+# No client do Kubernetes AWS
+
+#MUDAR PARA PEGAR O IP POR INPUT
+ssh -i key.pem ubuntu@18.212.50.159
+
+juju scp kubernetes-master/0:config ~/.kube/config
+
+kubectl delete deployment.apps/openvpn
+
+kubectl delete pvc openvpn-data-claim
+
+kubectl delete pv openvpn-data
+
+sudo snap install helm --classic
+
+helm init
+
+helm delete openvpn
+
+helm del --purge openvpn
+
+sleep 30
+
+kubectl delete deployment webserver
+
+kubectl delete svc webserver
+kubectl delete service/ovpn-service
+
+sleep 15
+
+git clone https://github.com/elijose55/EliCloud.git
+
+cd EliCloud/ProjetoFinal/openvpn
+
+kubectl create -f create-storage.yaml
+
+kubectl create -f create-storage-claim.yaml
+
+sleep 25
+
+helm install --name openvpn -f values.yaml stable/openvpn
+
+sleep 25
+
+chmod +x script
+
+./script eli default openvpn
+
+
+kubectl exec -t $(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].metadata.name }') -- bash -c "iptables -t nat -A PREROUTING -i eth0 -d $(hostname -i) -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6 && iptables -t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE"
+
+
+kubectl exec -it $(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].metadata.name }') bash
+
+iptables -t nat -A PREROUTING -i eth0 -d $(hostname -i) -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6
+
+iptables -t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE
+
+exit
+
+
+# TESTAR SERVICO AO INVEZ DE PEGAR O IP DO POD
+#VPN_POD_IP=$(kubectl get pods -l app=openvpn -o jsonpath='{ .items[0].status.podIP }')
+
+kubectl expose deployment openvpn --name=ovpn-service --cluster-ip=None
+
+kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=ovpn-service
+
+sleep 20
+
+kubectl get all
+
+kubectl expose deployment webserver --type=LoadBalancer
+
+sleep 10
+
+juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
+juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
+
+sleep 10
+
+exit
+
+
+#FALTA PEGAR O IP DA INSTANCIA POR INPUT
+#sftp ubuntu@18.212.196.74:EliCloud/ProjetoFinal/openvpn/eli.ovpn .
+
+
+rsync eli.ovpn cloud@10.103.0.25:~/
+
+
+
+
+
+
+
+kubectl config use-context juju-context-openstack
+
+# No client do Kubernetes OPENSTACK
+
+
+
+
+#FALTA PEGAR O IP DA INSTANCIA POR INPUT
+ssh -i key2.pem cloud@10.103.0.25
+
+#rsync eli.ovpn ubuntu@192.168.7.252:~/
+
+#rm eli.ovpn
+
+#ssh ubuntu@192.168.7.252
+
+kubectl delete secret vpn-certificate
+
+kubectl delete secret mysql-root-pass
+
+kubectl delete secret mysql-user-pass
+
+kubectl delete deployment database
+
+kubectl delete deployment mysql-image
+
+kubectl delete svc mysql-image
+
+kubectl delete pvc mysql-pv-claim
+
+kubectl delete pv mysql-pv
+
+sleep 10
+
+kubectl create secret generic mysql-root-pass --from-literal=password=123
+
+kubectl create secret generic mysql-user-pass --from-literal=username=user --from-literal=password=123
+
+sed '5d' eli.ovpn > tmp.ovpn
+
+mv tmp.ovpn eli.ovpn
+
+kubectl create secret generic vpn-certificate --from-file=password=eli.ovpn
+
+sleep 5
+
+#git clone https://github.com/elijose55/EliCloud.git
+
+#cd EliCloud/ProjetoFinal/database/mysql
+
+cd ..
+
+cd database/mysql
+
+kubectl apply -f mysql-deployment.yaml
+
+sleep 20
+
+cd ..
+
+cd webserver/
+
+kubectl apply -f webserverDB-deployment.yaml
+
+sleep 20
+
+#kubectl expose deployment database --type=LoadBalancer
+#juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc database -o=jsonpath='{.spec.ports[?(@.port==8000)].nodePort}')"
+#juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc database -o=jsonpath='{.spec.ports[?(@.port==8000)].nodePort}')"
+
+
+
+#FALTA PASSAR PARA O USUARIO O ENDERECO DO LOADBALANCER DA AWS
+
+
+
+
+
+
+
+#EXTRAS
+
+OVPN_K8S_SERVICE_NETWORK:
+
+Get this by looking at the ips of your services.
+
+ kubectl get services -o=template --template='{{ range $index, $element := .items }}{{ $element.spec.clusterIP }}
+ {{end}}'
+
+
+OVPN_K8S_POD_NETWORK:
+
+Get this by looking at the IPs of your running pods.
+ex
+ $kubectl get pods -o=template --template='{{range $index, $element := .items}}  {{$element.status.podIP}} {{$element.metadata.name}}
+ {{end}}'
+
+
+OVPN_K8S_DNS:
+
+You can find this using
+
+ kubectl --namespace=kube-system get service kube-dns
+
+###kubernetes raul
+192.168.7.252
+
+
+#PARA OBTER O CERTIFICADO PARA O CLIENT
+sftp ubuntu@[IP_DA_INSTANCIA]:openvpn/eli.ovpn ~/Desktop
+
+# Para rodar o client
+
+touch eli.ovpn
+printenv VPN_CERTIFICATE > eli.ovpn
+
+apt-get update
+apt-get install nano
+apt-get install -y openvpn
+mkdir -p /dev/net
+mknod /dev/net/tun c 10 200
+chmod 600 /dev/net/tun
+
+#sed '5d' eli.ovpn > tmp.ovpn
+#mv tmp.ovpn eli.ovpn
+
+openvpn --config eli.ovpn --daemon .
+openvpn --config eli.ovpn
+
+
+
+
+
+
+
