@@ -55,7 +55,9 @@ openvpn:
     enabled: true
     proxy:
       port: 8000
-  iptablesExtra: ['-t nat -A PREROUTING -i eth0 -d $(hostname -i) -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6', '-t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE'] 
+  iptablesExtra: 
+   - -t nat -A PREROUTING -i eth0 -d $(hostname -i) -p tcp -m multiport --dports 7080:65535 -j DNAT --to-destination 10.240.0.6
+   - -t nat -A POSTROUTING -s 10.240.0.0/8 -o eth0 -j MASQUERADE
   # Arbitrary lines appended to the end of the server configuration file
   # conf: |
   #  max-clients 100
