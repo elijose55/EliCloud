@@ -13,7 +13,7 @@ kubectl delete service/ovpn-service
 sleep 15
 rm -R -f EliCloud
 git clone https://github.com/elijose55/EliCloud.git
-cd EliCloud/ProjetoFinal/openvpn
+cd openvpn
 kubectl create -f create-storage.yaml
 kubectl create -f create-storage-claim.yaml
 sleep 25
