@@ -13,13 +13,12 @@ kubectl delete service/ovpn-service
 sleep 15
 rm -R -f EliCloud
 git clone https://github.com/elijose55/EliCloud.git
-cd openvpn
+cd EliCloud/openvpn
 kubectl create -f create-storage.yaml
 kubectl create -f create-storage-claim.yaml
 sleep 25
 helm install --name openvpn -f values.yaml stable/openvpn
 sleep 25
-chmod +x script
 kubectl expose deployment openvpn --name=ovpn-service --cluster-ip=None
 kubectl run webserver --image=elijose55/webserver:latest --port=5000 --replicas=2 --env="VPN_IP"=ovpn-service
 sleep 20
@@ -29,7 +28,8 @@ sleep 10
 juju run --unit kubernetes-worker/0 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 juju run --unit kubernetes-worker/1 "open-port $(kubectl get svc webserver -o=jsonpath='{.spec.ports[?(@.port==5000)].nodePort}')"
 sleep 15
+chmod +x script
+./script eli default openvpn
 chmod +x cert_script
-./cert_script $(kubectl get svc webserver -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo FIM_AWS
 exit
