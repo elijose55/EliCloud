@@ -44,7 +44,7 @@ def securityGroupConfig(name):
 		response = ec2.describe_vpcs()
 		vpc_id = response.get('Vpcs', [{}])[0].get('VpcId', '')
 
-		response = ec2.create_security_group(GroupName=name,Description='Security Group Eli, ele libera as portas 22 e 5000',VpcId=vpc_id)
+		response = ec2.create_security_group(GroupName=name,Description='Security Group Eli, it opens ports 22 and 5000',VpcId=vpc_id)
 		security_group_id = response['GroupId']
 
 
