@@ -25,6 +25,7 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 ## PRE-REQUIREMENTS
 - `sudo apt-get install kubectl`
 
+
 ## DEPLOYMENT SCRIPT CONFIGURATION
 To run the deployment script just replace the shown values bellow with the public IPs of AWS instance from where you control the Kubernetes cluster and with the IP of the MAAS instance in the [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
 
@@ -49,4 +50,13 @@ cat openstack_script | ssh ubuntu@[OPENSTACK_INSTANCE_IP]
 exit
 ```
 
+
+## RUNNING THE SCRIPT
+
+To use the script and build the whole infrastructure just make the EliCloud script executable and run it.
+
+```
+chmod +x EliCloud
+./EliCloud
+```
 
