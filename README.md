@@ -55,7 +55,7 @@ exit
 
 To use the script and build the whole infrastructure just make the EliCloud script executable and run it.
 
-```
+``` sh
 chmod +x EliCloud
 ./EliCloud
 ```
