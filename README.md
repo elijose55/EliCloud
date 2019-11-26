@@ -28,7 +28,7 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 ## DEPLOYMENT SCRIPT
 To run the deployment script just replace the shown values with the public IPs of the instances from where you control the Kubernetes cluster in the EliCloud [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
 
-`
+```
 rm eli.ovpn
 rsync -I scripts/aws_script ubuntu@[AWS_INSTANCE_PUBLIC_IP]:~/
 cat scripts/aws_script | ssh ubuntu@[AWS_INSTANCE_PUBLIC_IP]
@@ -38,4 +38,4 @@ sshpass -p "cloudp" rsync -I scripts/openstack_script cloud@[MAAS_INSTANCE_PUBLI
 sshpass -p "cloudp" rsync -I scripts/maas_script cloud@[MAAS_INSTANCE_PUBLIC_IP]:~/
 cat scripts/maas_script | sshpass -p "cloudp" ssh cloud@[MAAS_INSTANCE_PUBLIC_IP]
 echo FINISH
-`
+```
