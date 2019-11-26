@@ -2,7 +2,7 @@
 ![Hybrid_Cloud.jpg](https://github.com/elijose55/EliCloud/blob/master/images/Hybrid%20Cloud.jpg)
 
 ## NETWORK DIAGRAM
-![network_diagram.jpg](https://github.com/elijose55/EliCloud/blob/master/images/network_diagram.jpg)
+![network_diagram.jpg](https://github.com/elijose55/EliCloud/blob/master/images/Network%20Diagram%20(1).jpg)
 
 ## You should have the following before getting started:
 - Two kubernetes clusters in separate clouds (ex. AWS, GCE).
