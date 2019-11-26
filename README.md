@@ -29,7 +29,7 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 ## DEPLOYMENT SCRIPT CONFIGURATION
 To run the deployment script just replace the shown values bellow with the public IPs of AWS instance from where you control the Kubernetes cluster and with the IP of the MAAS instance in the [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
 
-`` bash
+```
 rm eli.ovpn
 rsync -I scripts/aws_script ubuntu@[AWS_INSTANCE_PUBLIC_IP]:~/
 cat scripts/aws_script | ssh ubuntu@[AWS_INSTANCE_PUBLIC_IP]
@@ -39,7 +39,7 @@ sshpass -p "cloudp" rsync -I scripts/openstack_script cloud@[MAAS_INSTANCE_IP]:~
 sshpass -p "cloudp" rsync -I scripts/maas_script cloud@[MAAS_INSTANCE_IP]:~/
 cat scripts/maas_script | sshpass -p "cloudp" ssh cloud@[MAAS_INSTANCE_IP]
 echo FINISH
-``
+```
 Then do the same for the [maas_script](https://github.com/elijose55/EliCloud/blob/master/scripts/maas_script) file, but replace the shown values bellow with the Openstack instance IP from where you can control the Kubernetes cluster:
 
 ``` 
@@ -55,10 +55,10 @@ exit
 
 To use the script and build the whole infrastructure just make the EliCloud script executable and run it.
 
-``` 
+`` 
 chmod +x EliCloud
-
+``
 ./EliCloud
+``
 
-```
 
