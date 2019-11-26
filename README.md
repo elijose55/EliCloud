@@ -15,7 +15,7 @@ To create a Kubernetes cluster on the AWS side, an EC2 instance was created usin
 For the private cloud Kubernetes deploy, it was much more complicated and lenghty as I used MAAS and JUJU to create the Openstack infrastructure on top of my physical machines, and on top of that I deployed the Kubernetes cluster. For that reason I did not upload any material for it as it would be incomplete and inaccurate, but if you are interested contact me: [elijose55@hotmail.com](mailto:elijose55@hotmail.com).
 
 ### PRIVATE CLOUD STACK DIAGRAM
-![alt text](https://github.com/elijose55/EliCloud/blob/master/images/Hybrid%20Cloud.jpg)
+
 
 
 
