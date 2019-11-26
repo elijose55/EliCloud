@@ -25,8 +25,8 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 ## PRE-REQUIREMENTS
 - `sudo apt-get install kubectl`
 
-## DEPLOYMENT SCRIPT
-To run the deployment script just replace the shown values with the public IPs of the instances from where you control the Kubernetes cluster in the [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
+## DEPLOYMENT SCRIPT CONFIGURATION
+To run the deployment script just replace the shown values bellow with the public IPs of AWS instance from where you control the Kubernetes cluster and with the IP of the MAAS instance in the [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
 
 ```
 rm eli.ovpn
@@ -34,8 +34,19 @@ rsync -I scripts/aws_script ubuntu@[AWS_INSTANCE_PUBLIC_IP]:~/
 cat scripts/aws_script | ssh ubuntu@[AWS_INSTANCE_PUBLIC_IP]
 sftp ubuntu@[AWS_INSTANCE_PUBLIC_IP]:EliCloud/openvpn/eli.ovpn .
 sshpass -p "cloudp" rsync -I eli.ovpn cloud@[MAAS_INSTANCE_PUBLIC_IP]:~/
-sshpass -p "cloudp" rsync -I scripts/openstack_script cloud@[MAAS_INSTANCE_PUBLIC_IP]:~/
-sshpass -p "cloudp" rsync -I scripts/maas_script cloud@[MAAS_INSTANCE_PUBLIC_IP]:~/
-cat scripts/maas_script | sshpass -p "cloudp" ssh cloud@[MAAS_INSTANCE_PUBLIC_IP]
+sshpass -p "cloudp" rsync -I scripts/openstack_script cloud@[MAAS_INSTANCE_IP]:~/
+sshpass -p "cloudp" rsync -I scripts/maas_script cloud@[MAAS_INSTANCE_IP]:~/
+cat scripts/maas_script | sshpass -p "cloudp" ssh cloud@[MAAS_INSTANCE_IP]
 echo FINISH
 ```
+Then do the same for the [maas_script](https://github.com/elijose55/EliCloud/blob/master/scripts/maas_script) file, but replace the shown values bellow with the Openstack instance IP from where you can control the Kubernetes cluster:
+
+```
+rsync -I eli.ovpn ubuntu@[OPENSTACK_INSTANCE_IP]:~/
+rm eli.ovpn
+chmod +x openstack_script
+cat openstack_script | ssh ubuntu@[OPENSTACK_INSTANCE_IP]
+exit
+```
+
+
