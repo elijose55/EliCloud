@@ -1,6 +1,9 @@
 ## ARQUITECTURE DIAGRAM
 ![Hybrid_Cloud.jpg](https://github.com/elijose55/EliCloud/blob/master/images/Hybrid%20Cloud.jpg)
 
+## NETWORK DIAGRAM
+![network_diagram.jpg](https://github.com/elijose55/EliCloud/blob/master/images/network_diagram.jpg)
+
 ## You should have the following before getting started:
 - Two kubernetes clusters in separate clouds (ex. AWS, GCE).
 - Controller access to both clusters.
@@ -13,6 +16,9 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 
 ### PRIVATE CLOUD STACK DIAGRAM
 ![alt text](https://github.com/elijose55/EliCloud/blob/master/images/Hybrid%20Cloud.jpg)
+
+
+
 
 
 
