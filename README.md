@@ -26,7 +26,7 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 - `sudo apt-get install kubectl`
 
 ## DEPLOYMENT SCRIPT
-To run the deployment script just replace the shown values with the public IPs of the instances from where you control the Kubernetes cluster in the EliCloud [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
+To run the deployment script just replace the shown values with the public IPs of the instances from where you control the Kubernetes cluster in the [EliCloud](https://github.com/elijose55/EliCloud/blob/master/EliCloud) file:
 
 ```
 rm eli.ovpn
