@@ -73,9 +73,10 @@ url = "http://[AWS_LOADBALACER_IP]:5000/Tarefa"
 
 To use the aplication just make it executable and execute it with the *--help* flag to view the options:
 
-`` 
+```
 chmod +x tarefa
+
 tarefa --help
-``
+```
 
 
