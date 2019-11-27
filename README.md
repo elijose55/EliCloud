@@ -75,7 +75,6 @@ To use the aplication just make it executable and execute it with the *--help* f
 
 `` 
 chmod +x tarefa
-
 tarefa --help
 ``
 
