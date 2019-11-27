@@ -63,4 +63,20 @@ chmod +x EliCloud
 ./EliCloud
 ``
 
+### CLIENT APLICATION
+
+[Here](https://github.com/elijose55/EliCloud/blob/master/client/tarefa), I created a client aplication to comunicate with the solution through the AWS LoadBalancer. Before using it run the creation script and after the AWS LoadBalancer IP is defined (`kubectl get all`), replace the url variable with this value as shown bellow:
+
+`` 
+url = "http://[AWS_LOADBALACER_IP]:5000/Tarefa"
+``
+
+To use the aplication just make it executable and execute it with the *--help* flag to view the options:
+
+`` 
+chmod +x tarefa
+
+tarefa --help
+``
+
 
