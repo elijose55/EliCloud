@@ -16,7 +16,7 @@ For the private cloud Kubernetes deploy, it was much more complicated and lenght
 
 ### PRIVATE CLOUD STACK DIAGRAM
 
-
+![stack_diagram.jpg](https://github.com/elijose55/EliCloud/blob/master/images/stack_diagram.jpg)
 
 
 
